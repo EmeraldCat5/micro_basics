@@ -5,21 +5,11 @@ import uuid
 hostName = "localhost"
 serverPort = 8080
 logging="http://localhost:12345"
+messages="http://localhost:12346"
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path=="/all":
             print("Starint \"all\"")
-            '''
-            keys=list(requests.get(logging+"/getKeyList").text)
-            print("Key list:", keys)
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            for key in keys:
-                value=requests.get(logging+"/getValueByKey/"+key).text
-                self.wfile.write(bytes("<p>Key: %s  Data: %s </p>" % (key,value) , "utf-8"))
-
-            '''
             x=str(requests.get(logging+"/all/").text).split('/')
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -28,6 +18,13 @@ class MyServer(BaseHTTPRequestHandler):
                 if y == "":
                     break
                 self.wfile.write(bytes("<p>Value: %s </p>" %(y), "utf-8"))
+            return
+        if self.path=="/messages":
+            x=requests.get(messages+"/messages").text
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(bytes("<p>MSG service said: %s </p>" % (x), "utf-8"))
             return
         print("Started GET")
         self.send_response(200)
